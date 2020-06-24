@@ -75,12 +75,71 @@ class SymClient:
         else:
             raise Exception('request_buffer_data failure')
 
-    def push_data_label(self, scheme_id, data_dict):
+    def push_data_label(self, schema_id, data_dict):
         body = {
-            "schema_id": scheme_id,
+            "schema_id": schema_id,
             "data": data_dict
         }
         url = '/data/push?id={id}&ts={ts}&sign={sign}'.format(id=self.company_id, ts=get_timestamp(), sign="testsign")
+        resp = post(url, body)
+        if resp is not None and resp['code'] == 200:
+            return 'success'
+        else:
+            raise Exception('push_data_label failure')
+
+    def upload_model_label_schema(self, toml_file):
+        toml_dict = get_toml_file(toml_file)
+        body = {
+            'toml': toml_dict
+        }
+        print(body)
+        url = '/label/schema?id={id}&ts={ts}&sign={sign}'.format(id=self.company_id, ts=get_timestamp(), sign="testsign")
+        data = post(url, body)
+        if data is None:
+            raise Exception('upload_model_label_schema failure')
+        elif data['code'] != 200:
+            raise Exception('upload_model_label_schema failure')
+        else:
+            return data['result']['schema_id']
+
+    def request_data_label(self, schema_id, start_date, end_date, cursor):
+        url = '/data/pull?id={id}&ts={ts}&sign={sign}'.format(id=self.company_id, ts=get_timestamp(), sign='testsign')
+        body = {
+            "schema_id": schema_id,
+            "scope": {
+                "start_date": start_date,
+                "end_date": end_date,
+                "cursor": cursor
+            }
+        }
+        data = post(url, body)
+        if data is not None and data['code'] == 200:
+            return data['result']['items'], data['result']['next_cursor']
+        else:
+            raise Exception('request_data_label failure')
+
+    def request_model_label(self, schema_id, start_date, end_date, cursor):
+        url = '/label/pull?id={id}&ts={ts}&sign={sign}'.format(id=self.company_id, ts=get_timestamp(), sign='testsign')
+        body = {
+            "schema_id": schema_id,
+            "scope": {
+                "start_date": start_date,
+                "end_date": end_date,
+                "cursor": cursor
+            }
+        }
+        data = post(url, body)
+        if data is not None and data['code'] == 200:
+            return data['result']['items'], data['result']['next_cursor']
+        else:
+            raise Exception('request_model_label failure')
+
+    def push_model_label(self, schema_id, data_dict):
+        body = {
+            "schema_id": schema_id,
+            "data": data_dict
+        }
+        url = '/label/push?id={id}&ts={ts}&sign={sign}'.format(id=self.company_id, ts=get_timestamp(), sign="testsign")
         resp = post(url, body)
         if resp is not None and resp['code'] == 200:
             return 'success'

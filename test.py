@@ -24,8 +24,28 @@ class TestClient(unittest.TestCase):
     def test_request_buffer_data(self):
         self.client.request_buffer_data(1273600184722538496, "2020-05-01", "2020-06-30", 0)
 
+    @unittest.skip('test_push_data_label pass')
     def test_push_data_label(self):
         res = self.client.push_data_label(1275804353319559168, {"data":"a"})
+        print(res)
+
+    @unittest.skip('test_upload_model_label pass')
+    def test_upload_model_label(self):
+        res = self.client.upload_model_label_schema('../openplatform/tools/test.toml')
+        print(res)
+
+    @unittest.skip('test_request_data_label pass')
+    def test_request_data_label(self):
+        res = self.client.request_data_label(1275004877172531200, "2020-05-01", "2020-06-30", 0)
+        print(res)
+
+    @unittest.skip('test_request_model_label pass')
+    def test_request_model_label(self):
+        res = self.client.request_model_label(1275012792373637120, "2020-05-01", "2020-06-30", 0)
+        print(res)
+
+    def test_push_model_label(self):
+        res = self.client.push_model_label( 1275012792373637120, {"test":"item"})
         print(res)
 
 if __name__ == "__main__":
